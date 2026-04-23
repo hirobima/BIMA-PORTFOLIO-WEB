@@ -9,17 +9,14 @@ const ProjectGallery = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        // Ambil daftar file JSON dari GitHub API
         const repo = "hirobima/BIMA-PORTFOLIO-WEB";
         const apiUrl = `https://api.github.com/repos/${repo}/contents/src/content/projects`;
         
         const response = await fetch(apiUrl);
         const files = await response.json();
         
-        // Filter hanya file .json
         const jsonFiles = files.filter(file => file.name.endsWith('.json') && file.name !== '.gitkeep');
         
-        // Ambil isi setiap file JSON
         const projectsData = await Promise.all(
           jsonFiles.map(async (file) => {
             const contentResponse = await fetch(file.download_url);
@@ -31,10 +28,7 @@ const ProjectGallery = () => {
           })
         );
         
-        // Urutkan berdasarkan order
         projectsData.sort((a, b) => (a.order || 0) - (b.order || 0));
-        
-        console.log("Projects loaded:", projectsData); // Cek di console browser
         setProjects(projectsData);
       } catch (error) {
         console.error("Error loading projects:", error);
@@ -52,28 +46,22 @@ const ProjectGallery = () => {
     ? projects 
     : projects.filter(p => p.category === filter);
 
+  // Close modal with Escape key
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        setSelectedProject(null);
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, []);
+
   if (loading) {
     return (
       <section id="work" style={{ padding: "60px 0" }}>
         <div className="text-center" style={{ padding: "40px", color: "var(--text-secondary)" }}>
           Loading projects...
-        </div>
-      </section>
-    );
-  }
-
-  if (projects.length === 0) {
-    return (
-      <section id="work" style={{ padding: "60px 0" }}>
-        <div className="section-header">
-          <div className="section-number">02 / SELECTED WORK</div>
-          <h2 className="section-title">Project Gallery</h2>
-          <p className="section-description">
-            A curated set of CNC programs, toolpaths and fabrication workflows.
-          </p>
-        </div>
-        <div className="text-center" style={{ padding: "40px", color: "var(--text-secondary)" }}>
-          No projects yet. Add one from the admin panel!
         </div>
       </section>
     );
@@ -119,28 +107,55 @@ const ProjectGallery = () => {
             </div>
             <div className="project-content">
               <h3 className="project-title">{project.title}</h3>
-              <p className="project-description">{project.description}</p>
+              <p className="project-description">{project.description?.substring(0, 80)}...</p>
               <p className="project-software">{project.software}</p>
             </div>
           </div>
         ))}
       </div>
 
+      {/* MODAL POPUP - Full Details */}
       {selectedProject && (
         <div className="modal-overlay" onClick={() => setSelectedProject(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3 style={{ fontSize: "24px", marginBottom: "12px" }}>{selectedProject.title}</h3>
-            <p style={{ color: "#888", marginBottom: "16px" }}>{selectedProject.description}</p>
-            <p style={{ fontSize: "12px", marginBottom: "8px" }}>Software: {selectedProject.software}</p>
-            <p style={{ fontSize: "12px", marginBottom: "24px" }}>Category: {selectedProject.category}</p>
-            {selectedProject.tags && selectedProject.tags.length > 0 && (
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "24px" }}>
-                {selectedProject.tags.map((tag, i) => (
-                  <span key={i} style={{ fontSize: "10px", background: "#333", padding: "2px 8px", borderRadius: "12px" }}>{tag}</span>
-                ))}
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={() => setSelectedProject(null)}>
+              ✕
+            </button>
+            
+            {selectedProject.image && (
+              <div className="modal-image">
+                <img src={selectedProject.image} alt={selectedProject.title} />
               </div>
             )}
-            <button className="modal-close" onClick={() => setSelectedProject(null)}>Close</button>
+            
+            <div className="modal-body">
+              <div className="modal-header">
+                <span className="modal-code">{selectedProject.code || selectedProject.id}</span>
+                <span className="modal-category">{selectedProject.category}</span>
+              </div>
+              
+              <h2 className="modal-title">{selectedProject.title}</h2>
+              
+              <p className="modal-description">{selectedProject.description}</p>
+              
+              <div className="modal-details">
+                <div className="modal-detail-item">
+                  <span className="modal-detail-label">Software</span>
+                  <span className="modal-detail-value">{selectedProject.software}</span>
+                </div>
+                
+                {selectedProject.tags && selectedProject.tags.length > 0 && (
+                  <div className="modal-detail-item">
+                    <span className="modal-detail-label">Tags</span>
+                    <div className="modal-tags">
+                      {selectedProject.tags.map((tag, i) => (
+                        <span key={i} className="modal-tag">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
