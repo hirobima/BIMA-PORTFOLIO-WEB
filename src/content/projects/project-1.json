@@ -1,0 +1,9 @@
+{
+  "title": "Furniture CNC Routing",
+  "code": "CNC-01",
+  "description": "Optimized nested toolpaths for plywood cabinetry production",
+  "category": "CNC Router",
+  "software": "Aspire / ZW3D",
+  "tags": ["Production", "Nesting"],
+  "order": 1
+}
