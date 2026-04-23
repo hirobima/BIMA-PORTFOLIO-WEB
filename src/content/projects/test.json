@@ -1,9 +1,0 @@
-{
-  "title": "Test Project",
-  "code": "CNC-TEST",
-  "description": "Ini adalah project test dari admin panel",
-  "category": "CNC Router",
-  "software": "Aspire / ZW3D",
-  "tags": ["Test", "Demo"],
-  "order": 1
-}
