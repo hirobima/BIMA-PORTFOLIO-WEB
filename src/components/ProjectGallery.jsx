@@ -57,10 +57,17 @@ const ProjectGallery = () => {
     return () => window.removeEventListener('keydown', handleEscape);
   }, []);
 
+  // Close modal when clicking outside
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      setSelectedProject(null);
+    }
+  };
+
   if (loading) {
     return (
       <section id="work" style={{ padding: "60px 0" }}>
-        <div className="text-center" style={{ padding: "40px", color: "var(--text-secondary)" }}>
+        <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>
           Loading projects...
         </div>
       </section>
@@ -114,47 +121,206 @@ const ProjectGallery = () => {
         ))}
       </div>
 
-      {/* MODAL POPUP - Full Details */}
+      {/* MODAL POPUP - Improved Version */}
       {selectedProject && (
-        <div className="modal-overlay" onClick={() => setSelectedProject(null)}>
-          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close-btn" onClick={() => setSelectedProject(null)}>
+        <div 
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.85)",
+            backdropFilter: "blur(8px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: "20px",
+          }}
+          onClick={handleOverlayClick}
+        >
+          <div 
+            style={{
+              backgroundColor: "#110f0e",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "20px",
+              maxWidth: "500px",
+              width: "100%",
+              maxHeight: "80vh",
+              overflowY: "auto",
+              position: "relative",
+            }}
+          >
+            {/* Close Button */}
+            <button 
+              onClick={() => setSelectedProject(null)}
+              style={{
+                position: "absolute",
+                top: "12px",
+                right: "12px",
+                width: "32px",
+                height: "32px",
+                backgroundColor: "rgba(0,0,0,0.5)",
+                border: "1px solid rgba(255,255,255,0.2)",
+                borderRadius: "50%",
+                color: "#fff",
+                fontSize: "18px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 10,
+                transition: "all 0.3s",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = "#98a869";
+                e.target.style.color = "#110f0e";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = "rgba(0,0,0,0.5)";
+                e.target.style.color = "#fff";
+              }}
+            >
               ✕
             </button>
-            
+
+            {/* Image */}
             {selectedProject.image && (
-              <div className="modal-image">
-                <img src={selectedProject.image} alt={selectedProject.title} />
+              <div 
+                style={{
+                  width: "100%",
+                  height: "220px",
+                  overflow: "hidden",
+                  borderRadius: "20px 20px 0 0",
+                }}
+              >
+                <img 
+                  src={selectedProject.image} 
+                  alt={selectedProject.title}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
               </div>
             )}
-            
-            <div className="modal-body">
-              <div className="modal-header">
-                <span className="modal-code">{selectedProject.code || selectedProject.id}</span>
-                <span className="modal-category">{selectedProject.category}</span>
+
+            {/* Content */}
+            <div style={{ padding: "24px" }}>
+              {/* Header with Code & Category */}
+              <div 
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "16px",
+                  flexWrap: "wrap",
+                  gap: "10px",
+                }}
+              >
+                <span 
+                  style={{
+                    fontFamily: "monospace",
+                    fontSize: "11px",
+                    color: "#98a869",
+                    backgroundColor: "rgba(152,168,105,0.15)",
+                    padding: "4px 10px",
+                    borderRadius: "20px",
+                  }}
+                >
+                  {selectedProject.code || selectedProject.id}
+                </span>
+                <span 
+                  style={{
+                    fontSize: "10px",
+                    color: "#888",
+                    backgroundColor: "#1a1a1a",
+                    padding: "4px 10px",
+                    borderRadius: "20px",
+                  }}
+                >
+                  {selectedProject.category || "Uncategorized"}
+                </span>
               </div>
-              
-              <h2 className="modal-title">{selectedProject.title}</h2>
-              
-              <p className="modal-description">{selectedProject.description}</p>
-              
-              <div className="modal-details">
-                <div className="modal-detail-item">
-                  <span className="modal-detail-label">Software</span>
-                  <span className="modal-detail-value">{selectedProject.software}</span>
+
+              {/* Title */}
+              <h2 
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "700",
+                  color: "#fff",
+                  marginBottom: "16px",
+                  lineHeight: "1.3",
+                }}
+              >
+                {selectedProject.title}
+              </h2>
+
+              {/* Description */}
+              <p 
+                style={{
+                  fontSize: "13px",
+                  color: "#888",
+                  lineHeight: "1.6",
+                  marginBottom: "20px",
+                }}
+              >
+                {selectedProject.description}
+              </p>
+
+              {/* Divider */}
+              <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", marginBottom: "16px" }}></div>
+
+              {/* Software */}
+              <div style={{ marginBottom: "16px" }}>
+                <div 
+                  style={{
+                    fontSize: "10px",
+                    color: "#98a869",
+                    letterSpacing: "1px",
+                    marginBottom: "6px",
+                  }}
+                >
+                  SOFTWARE
                 </div>
-                
-                {selectedProject.tags && selectedProject.tags.length > 0 && (
-                  <div className="modal-detail-item">
-                    <span className="modal-detail-label">Tags</span>
-                    <div className="modal-tags">
-                      {selectedProject.tags.map((tag, i) => (
-                        <span key={i} className="modal-tag">{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <div style={{ fontSize: "13px", color: "#ccc" }}>
+                  {selectedProject.software}
+                </div>
               </div>
+
+              {/* Tags */}
+              {selectedProject.tags && selectedProject.tags.length > 0 && (
+                <div>
+                  <div 
+                    style={{
+                      fontSize: "10px",
+                      color: "#98a869",
+                      letterSpacing: "1px",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    TAGS
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                    {selectedProject.tags.map((tag, i) => (
+                      <span 
+                        key={i}
+                        style={{
+                          fontSize: "10px",
+                          color: "#888",
+                          backgroundColor: "#1a1a1a",
+                          padding: "4px 10px",
+                          borderRadius: "20px",
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
