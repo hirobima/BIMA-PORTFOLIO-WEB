@@ -2,25 +2,35 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: "public/images"
-public_folder: "/images"
-media_library:
-  name: uploadcare
-  config:
-    publicKey: "demopublickey"
+media_folder: public/images
+public_folder: /images
 
 collections:
-  - name: "projects"
-    label: "Projects"
-    folder: "src/content/projects"
+  - name: projects
+    label: Projects
+    folder: src/content/projects
     create: true
     slug: "{{slug}}"
     fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Code", name: "code", widget: "string" }
-      - { label: "Description", name: "description", widget: "text" }
-      - { label: "Category", name: "category", widget: "string" }
-      - { label: "Software", name: "software", widget: "string" }
-      - { label: "Tags", name: "tags", widget: "list", default: [] }
-      - { label: "Image", name: "image", widget: "image", required: false }
-      - { label: "Order", name: "order", widget: "number", default: 0 }
+      - { name: title, label: Title, widget: string }
+      - { name: code, label: Project Code, widget: string }
+      - { name: description, label: Description, widget: text }
+      - { name: category, label: Category, widget: string }
+      - { name: software, label: Software, widget: string }
+      - { name: tags, label: Tags, widget: list, default: [] }
+      - { name: image, label: Image, widget: image, required: false }
+      - { name: order, label: Order, widget: number, default: 0 }
+
+  - name: settings
+    label: Settings
+    files:
+      - name: general
+        label: General Settings
+        file: src/content/settings.json
+        fields:
+          - { name: heroTitle, label: Hero Title, widget: string }
+          - { name: heroSubtitle, label: Hero Subtitle, widget: string }
+          - { name: heroDescription, label: Hero Description, widget: text }
+          - { name: email, label: Email, widget: string }
+          - { name: whatsapp, label: WhatsApp, widget: string }
+          - { name: location, label: Location, widget: string }
