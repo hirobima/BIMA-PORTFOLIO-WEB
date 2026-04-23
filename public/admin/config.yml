@@ -1,1 +1,36 @@
+backend:
+  name: git-gateway
+  branch: main
 
+media_folder: "public/images/projects"
+public_folder: "/images/projects"
+
+collections:
+  - name: "projects"
+    label: "Projects"
+    folder: "src/content/projects"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Project Code", name: "code", widget: "string", default: "CNC-00" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Category", name: "category", widget: "select", options: ["CNC Router", "3 Axis", "4 Axis Rotary", "5 Axis", "Furniture Design"] }
+      - { label: "Software", name: "software", widget: "string" }
+      - { label: "Tags", name: "tags", widget: "list", default: ["Production"] }
+      - { label: "Image", name: "image", widget: "image", required: false }
+      - { label: "Order", name: "order", widget: "number", default: 0 }
+
+  - name: "settings"
+    label: "Website Settings"
+    files:
+      - name: "general"
+        label: "General Settings"
+        file: "src/content/settings.json"
+        fields:
+          - { label: "Hero Title", name: "heroTitle", widget: "string", default: "Precision in Every Cut." }
+          - { label: "Hero Subtitle", name: "heroSubtitle", widget: "string", default: "— CNC PROGRAMMER & PRODUCT DESIGNER" }
+          - { label: "Hero Description", name: "heroDescription", widget: "text", default: "Crafting efficient toolpaths..." }
+          - { label: "Email", name: "email", widget: "string", default: "bima.yufianto@cncprogrammer.com" }
+          - { label: "WhatsApp", name: "whatsapp", widget: "string", default: "+62 812 3456 7890" }
+          - { label: "Location", name: "location", widget: "string", default: "Indonesia" }
