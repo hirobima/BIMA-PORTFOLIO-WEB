@@ -344,6 +344,18 @@ const Admin = () => {
         <div style={styles.sectionCard}>
           <h2 style={styles.sectionTitle}>🏠 Hero Section</h2>
           <div style={styles.formGrid2}>
+            <div>
+        <label style={styles.label}>🖼️ Hero Image / CAD Box Image</label>
+        <input 
+          value={settings.hero_image_url || ''} 
+          onChange={(e) => setSettings({...settings, hero_image_url: e.target.value})} 
+          style={styles.input} 
+          placeholder="https://contoh.com/gambar.jpg"
+        />
+        <small style={{color: '#666', fontSize: '11px'}}>
+          Masukkan URL gambar untuk mengganti tampilan CAD box
+        </small>
+      </div>
             <div><label style={styles.label}>Hero Subtitle</label><input value={settings.hero_subtitle || ''} onChange={(e) => setSettings({...settings, hero_subtitle: e.target.value})} style={styles.input} /></div>
             <div><label style={styles.label}>Hero Description</label><textarea rows="3" value={settings.hero_description || ''} onChange={(e) => setSettings({...settings, hero_description: e.target.value})} style={styles.textarea} /></div>
             <div><label style={styles.label}>Years Experience</label><input value={settings.years_experience || '8+'} onChange={(e) => setSettings({...settings, years_experience: e.target.value})} style={styles.input} /></div>

@@ -1585,3 +1585,33 @@ input:checked + .slider .slider-icon.moon {
   }
 }
 }
+
+/* Gallery Badge di card project */
+.gallery-badge {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  color: #98a869;
+  font-family: monospace;
+  z-index: 5;
+}
+
+/* Scrollbar untuk thumbnail strip */
+.thumbnail-strip::-webkit-scrollbar {
+  height: 4px;
+}
+
+.thumbnail-strip::-webkit-scrollbar-track {
+  background: #333;
+  border-radius: 10px;
+}
+
+.thumbnail-strip::-webkit-scrollbar-thumb {
+  background: #98a869;
+  border-radius: 10px;
+}

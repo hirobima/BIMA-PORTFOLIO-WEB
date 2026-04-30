@@ -59,21 +59,45 @@ const Hero = () => {
       </div>
 
       <div className="cad-box">
-        <div className="cad-tolerance">Tolerance ±0.05mm</div>
-        <div className="cad-code">DWG-001 / ISOMETRIC</div>
-        <div className="cad-drawing">
-          <div className="drawing-box">
-            <div className="drawing-grid">
-              <div className="drawing-line-h"></div>
-              <div className="drawing-line-v"></div>
+        {settings?.hero_image_url ? (
+          // Jika ada gambar, tampilkan gambar
+          <>
+            <div className="cad-tolerance">FEATURED WORK</div>
+            <div className="cad-code">PORTFOLIO HIGHLIGHT</div>
+            <div className="cad-drawing">
+              <img 
+                src={settings.hero_image_url} 
+                alt="Featured project"
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  borderRadius: "12px",
+                  objectFit: "cover",
+                  maxHeight: "300px"
+                }}
+              />
             </div>
-            <div className="drawing-label">ISOMETRIC VIEW</div>
-            <div className="drawing-details">
-              <span>MAT: OAK</span>
-              <span>SCALE: 1:1</span>
+          </>
+        ) : (
+          // Jika tidak ada gambar, tampilkan CAD default
+          <>
+            <div className="cad-tolerance">Tolerance ±0.05mm</div>
+            <div className="cad-code">DWG-001 / ISOMETRIC</div>
+            <div className="cad-drawing">
+              <div className="drawing-box">
+                <div className="drawing-grid">
+                  <div className="drawing-line-h"></div>
+                  <div className="drawing-line-v"></div>
+                </div>
+                <div className="drawing-label">ISOMETRIC VIEW</div>
+                <div className="drawing-details">
+                  <span>MAT: OAK</span>
+                  <span>SCALE: 1:1</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
