@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSiteSettings } from '../hooks/useSupabase';
+import { useSiteSettings } from '../hooks/useSupabase.js';
 
 const Hero = () => {
   const { settings, loading } = useSiteSettings();

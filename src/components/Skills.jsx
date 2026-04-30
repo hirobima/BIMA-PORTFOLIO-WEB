@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSkills } from '../hooks/useSupabase';
+import { useSkills } from '../hooks/useSupabase.js';
 
 const Skills = () => {
   const { skills, loading } = useSkills();

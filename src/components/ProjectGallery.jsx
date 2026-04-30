@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useProjects } from '../hooks/useSupabase';
+import { useProjects } from '../hooks/useSupabase.js';
 
 const ProjectGallery = () => {
   const { projects, loading, error } = useProjects();
