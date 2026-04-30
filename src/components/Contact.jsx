@@ -65,7 +65,7 @@ const Contact = () => {
                   wordBreak: "break-all",
                 }}
               >
-                bima.yufianto@cncprogrammer.com
+                hirobima28@gmail.com
               </div>
             </div>
 
@@ -86,7 +86,7 @@ const Contact = () => {
                   color: "var(--text-primary)",
                 }}
               >
-                +62 812 3456 7890
+                +62 895 0592 0370
               </div>
             </div>
 
@@ -114,7 +114,7 @@ const Contact = () => {
             <button
               onClick={() =>
                 window.open(
-                  "https://wa.me/6281234567890?text=Halo%20Bima,%20saya%20tertarik%20untuk%20diskusi%20proyek%20CNC",
+                  "https://wa.me/6289505920370?text=Halo%20Bima,%20saya%20tertarik%20untuk%20diskusi%20proyek%20CNC",
                   "_blank"
                 )
               }
