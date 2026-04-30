@@ -9,8 +9,16 @@
       "dest": "/api/$1"
     },
     {
+      "src": "/admin",
+      "dest": "/index.html"
+    },
+    {
       "src": "/admin/(.*)",
-      "dest": "/admin/index.html"
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
     }
   ]
 }
