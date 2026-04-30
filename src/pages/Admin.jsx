@@ -88,7 +88,7 @@ const Admin = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (email === 'admin@bima.com' && password === 'bimacnc2024') {
+    if (email === 'hirobima28@gmail.com' && password === 'Momogie28') {
       setIsAuthenticated(true);
       localStorage.setItem('admin_auth', 'true');
       fetchAllData();
@@ -307,7 +307,7 @@ const Admin = () => {
           <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={styles.input} required />
           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={styles.input} required />
           <button type="submit" style={styles.loginButton}>Login</button>
-          <p style={styles.demoCreds}>admin@bima.com / bimacnc2024</p>
+          <p style={styles.demoCreds}>Hanya Admin yang boleh masuk</p>
         </form>
       </div>
     );
