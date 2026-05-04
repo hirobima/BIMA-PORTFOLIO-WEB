@@ -1,6 +1,38 @@
-import React from "react";
+import React from 'react';
+import { useSiteSettings } from '../hooks/useSupabase';
 
 const About = () => {
+  const { settings, loading } = useSiteSettings();
+
+  if (loading) {
+    return (
+      <section id="about" style={{ padding: "60px 0", borderTop: "1px solid var(--border-color)" }}>
+        <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>
+          Loading about section...
+        </div>
+      </section>
+    );
+  }
+
+  // Data dari database dengan fallback ke default
+  const location = settings?.location || "INDONESIA";
+  const availability = settings?.availability || "OPEN TO WORK";
+  const shortDesc = settings?.about_description || 
+    "Experienced CNC programmer specializing in furniture production, precision cutting, and efficient toolpath strategies.";
+  const longDesc = settings?.about_long ||
+    "I translate CAD designs into reliable, optimized CNC programs — from 3-axis routing to 5-axis complex joinery. My focus is on clean toolpaths, minimal waste, and production workflows that scale from prototype to series manufacturing.";
+  
+  const checklistItems = settings?.about_checklist || [
+    "Production-ready toolpaths with optimized feeds and speeds",
+    "Full pipeline from CAD model to post-processed G-code",
+    "Experience across furniture, joinery and precision components",
+    "Fluent in ZW3D, Aspire, VCarve, Fusion 360, and PowerMill"
+  ];
+  
+  const softwareStack = settings?.software_stack || [
+    "ZW3D", "Aspire", "VCarve", "Fusion 360", "PowerMill", "SolidWorks", "AutoCAD", "Rhino"
+  ];
+
   return (
     <section
       id="about"
@@ -33,11 +65,11 @@ const About = () => {
           >
             <div className="about-detail">
               <div className="about-detail-label">BASED IN</div>
-              <div className="about-detail-value">INDONESIA</div>
+              <div className="about-detail-value">{location}</div>
             </div>
             <div className="about-detail">
               <div className="about-detail-label">AVAILABILITY</div>
-              <div className="about-detail-value">OPEN TO WORK</div>
+              <div className="about-detail-value">{availability}</div>
             </div>
           </div>
 
@@ -49,8 +81,7 @@ const About = () => {
               fontSize: "clamp(13px, 4vw, 15px)",
             }}
           >
-            Experienced CNC programmer specializing in furniture production,
-            precision cutting, and efficient toolpath strategies.
+            {shortDesc}
           </p>
 
           <p
@@ -61,93 +92,33 @@ const About = () => {
               fontSize: "clamp(13px, 4vw, 15px)",
             }}
           >
-            I translate CAD designs into reliable, optimized CNC programs — from
-            3-axis routing to 5-axis complex joinery. My focus is on clean
-            toolpaths, minimal waste, and production workflows that scale from
-            prototype to series manufacturing.
+            {longDesc}
           </p>
 
           <ul style={{ listStyle: "none", marginBottom: "32px" }}>
-            <li
-              style={{
-                color: "var(--text-secondary)",
-                fontSize: "clamp(12px, 3.5vw, 14px)",
-                marginBottom: "10px",
-                paddingLeft: "20px",
-                position: "relative",
-              }}
-            >
-              <span
+            {checklistItems.map((item, index) => (
+              <li
+                key={index}
                 style={{
-                  position: "absolute",
-                  left: 0,
-                  color: "var(--accent-color)",
+                  color: "var(--text-secondary)",
+                  fontSize: "clamp(12px, 3.5vw, 14px)",
+                  marginBottom: "10px",
+                  paddingLeft: "20px",
+                  position: "relative",
                 }}
               >
-                ✓
-              </span>{" "}
-              Production-ready toolpaths with optimized feeds and speeds
-            </li>
-            <li
-              style={{
-                color: "var(--text-secondary)",
-                fontSize: "clamp(12px, 3.5vw, 14px)",
-                marginBottom: "10px",
-                paddingLeft: "20px",
-                position: "relative",
-              }}
-            >
-              <span
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  color: "var(--accent-color)",
-                }}
-              >
-                ✓
-              </span>{" "}
-              Full pipeline from CAD model to post-processed G-code
-            </li>
-            <li
-              style={{
-                color: "var(--text-secondary)",
-                fontSize: "clamp(12px, 3.5vw, 14px)",
-                marginBottom: "10px",
-                paddingLeft: "20px",
-                position: "relative",
-              }}
-            >
-              <span
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  color: "var(--accent-color)",
-                }}
-              >
-                ✓
-              </span>{" "}
-              Experience across furniture, joinery and precision components
-            </li>
-            <li
-              style={{
-                color: "var(--text-secondary)",
-                fontSize: "clamp(12px, 3.5vw, 14px)",
-                marginBottom: "10px",
-                paddingLeft: "20px",
-                position: "relative",
-              }}
-            >
-              <span
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  color: "var(--accent-color)",
-                }}
-              >
-                ✓
-              </span>{" "}
-              Fluent in ZW3D, Aspire, VCarve, Fusion 360, and PowerMill
-            </li>
+                <span
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    color: "var(--accent-color)",
+                  }}
+                >
+                  ✓
+                </span>{" "}
+                {item}
+              </li>
+            ))}
           </ul>
 
           <div>
@@ -162,16 +133,7 @@ const About = () => {
               SOFTWARE STACK
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-              {[
-                "ZW3D",
-                "Aspire",
-                "VCarve",
-                "Fusion 360",
-                "PowerMill",
-                "SolidWorks",
-                "AutoCAD",
-                "Rhino",
-              ].map((sw, i) => (
+              {softwareStack.map((sw, i) => (
                 <span
                   key={i}
                   style={{

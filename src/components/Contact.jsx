@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useSiteSettings } from "../hooks/useSupabase";
 
 const Contact = () => {
+  const { settings, loading } = useSiteSettings();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -9,7 +11,6 @@ const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
 
-  // GANTI DENGAN FORM ID ANDA DARI FORMSPREE
   const FORMSPREE_ID = "mojrabbr";
 
   const handleSubmit = async (e) => {
@@ -20,9 +21,7 @@ const Contact = () => {
     try {
       const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
@@ -47,13 +46,29 @@ const Contact = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <section id="contact" style={{ padding: "60px 0", borderTop: "1px solid var(--border-color)" }}>
+        <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>
+          Loading contact section...
+        </div>
+      </section>
+    );
+  }
+
+  // Data dari database dengan fallback
+  const email = settings?.email || "hirobima28@gmail.com";
+  const whatsapp = settings?.whatsapp || "+62 895 0592 0370";
+  const whatsappRaw = settings?.whatsapp_raw || "6289505920370";
+  const location = settings?.location || "Indonesia";
+
   return (
     <section
       id="contact"
       style={{ padding: "60px 0", borderTop: "1px solid var(--border-color)" }}
     >
       <div className="contact-grid">
-        {/* Left Column - Sama seperti sebelumnya */}
+        {/* Left Column */}
         <div>
           <div className="section-number" style={{ textAlign: "left" }}>
             05 / CONTACT
@@ -97,7 +112,7 @@ const Contact = () => {
                   wordBreak: "break-all",
                 }}
               >
-                hirobima28@gmail.com
+                {email}
               </div>
             </div>
 
@@ -118,7 +133,7 @@ const Contact = () => {
                   color: "var(--text-primary)",
                 }}
               >
-                +62 895 0592 0370
+                {whatsapp}
               </div>
             </div>
 
@@ -139,14 +154,14 @@ const Contact = () => {
                   color: "var(--text-primary)",
                 }}
               >
-                Indonesia
+                {location}
               </div>
             </div>
 
             <button
               onClick={() =>
                 window.open(
-                  "https://wa.me/6289505920370?text=Halo%20Bima,%20saya%20tertarik%20untuk%20diskusi%20proyek%20CNC",
+                  `https://wa.me/${whatsappRaw}?text=Halo%20Bima,%20saya%20tertarik%20untuk%20diskusi%20proyek%20CNC`,
                   "_blank"
                 )
               }
@@ -160,7 +175,6 @@ const Contact = () => {
         {/* Right Column - Contact Form */}
         <div className="contact-form">
           <form onSubmit={handleSubmit}>
-            {/* Success Message */}
             {submitStatus === "success" && (
               <div
                 style={{
@@ -178,7 +192,6 @@ const Contact = () => {
               </div>
             )}
 
-            {/* Error Message */}
             {submitStatus === "error" && (
               <div
                 style={{
@@ -211,9 +224,7 @@ const Contact = () => {
                 type="text"
                 required
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="form-input"
                 placeholder="Your name"
                 disabled={isSubmitting}
@@ -235,9 +246,7 @@ const Contact = () => {
                 type="email"
                 required
                 value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="form-input"
                 placeholder="your@email.com"
                 disabled={isSubmitting}
@@ -259,9 +268,7 @@ const Contact = () => {
                 required
                 rows="4"
                 value={formData.message}
-                onChange={(e) =>
-                  setFormData({ ...formData, message: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 className="form-textarea"
                 placeholder="Tell me about your project..."
                 disabled={isSubmitting}

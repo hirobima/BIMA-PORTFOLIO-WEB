@@ -1,7 +1,9 @@
 import React, { useContext } from "react";
 import { ThemeContext } from "../App";
+import { useSiteSettings } from "../hooks/useSupabase";
 
 const Footer = () => {
+  const { settings, loading } = useSiteSettings();
   const { theme } = useContext(ThemeContext);
 
   const scrollToTop = () => {
@@ -15,17 +17,32 @@ const Footer = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <footer className="footer">
+        <div style={{ textAlign: "center", padding: "40px" }}>Loading footer...</div>
+      </footer>
+    );
+  }
+
+  // Data dari database dengan fallback
+  const footerName = settings?.footer_name || "Bima Yufianto";
+  const footerTitle = settings?.footer_title || "CNC PROGRAMMER & PRODUCT DESIGNER";
+  const footerBio = settings?.footer_bio || "Precision CNC programming, toolpath optimization and production-ready digital fabrication — built from Indonesia.";
+  const email = settings?.email || "hirobima28@gmail.com";
+  const whatsapp = settings?.whatsapp || "+62 895 0592 0370";
+  const whatsappRaw = settings?.whatsapp_raw || "6289505920370";
+  const footerCopyright = settings?.footer_copyright || "© 2026 BIMA YUFIANTO. ALL RIGHTS RESERVED.";
+  const footerCredits = settings?.footer_credits || "BUILT WITH PRECISION - V1.0";
+
   return (
     <footer className="footer">
       <div className="footer-container">
-        {/* Column 1 - Info */}
+        {/* Column 1 - Info (dinamis dari CMS) */}
         <div className="footer-col">
-          <div className="footer-name">Bima Yufianto</div>
-          <div className="footer-title">CNC PROGRAMMER & PRODUCT DESIGNER</div>
-          <div className="footer-bio">
-            Precision CNC programming, toolpath optimization and
-            production-ready digital fabrication — built from Indonesia.
-          </div>
+          <div className="footer-name">{footerName}</div>
+          <div className="footer-title">{footerTitle}</div>
+          <div className="footer-bio">{footerBio}</div>
         </div>
 
         {/* Column 2 - Navigation */}
@@ -42,24 +59,20 @@ const Footer = () => {
               <button onClick={() => scrollToSection("skills")}>Skills</button>
             </li>
             <li>
-              <button onClick={() => scrollToSection("contact")}>
-                Contact
-              </button>
+              <button onClick={() => scrollToSection("contact")}>Contact</button>
             </li>
           </ul>
         </div>
 
-        {/* Column 3 - Elsewhere */}
+        {/* Column 3 - Contact Info (dinamis dari CMS) */}
         <div className="footer-col">
-          <div className="footer-nav-title">ELSEWHERE</div>
+          <div className="footer-nav-title">CONTACT</div>
           <ul className="footer-nav-list">
             <li>
-              <a href="mailto:bima.yufianto@cncprogrammer.com">
-                bima.yufianto@cncprogrammer.com
-              </a>
+              <a href={`mailto:${email}`}>{email}</a>
             </li>
             <li>
-              <a href="https://wa.me/6281234567890">+62 812 3456 7890</a>
+              <a href={`https://wa.me/${whatsappRaw}`}>{whatsapp}</a>
             </li>
             <li>
               <button onClick={() => window.open("#", "_blank")}>Fiverr</button>
@@ -71,13 +84,11 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom Bar */}
+      {/* Bottom Bar (dinamis dari CMS) */}
       <div className="footer-bottom">
-        <div className="footer-copyright">
-          © 2026 BIMA YUFIANTO. ALL RIGHTS RESERVED.
-        </div>
+        <div className="footer-copyright">{footerCopyright}</div>
         <div className="footer-credits">
-          <span>BUILT WITH PRECISION - V1.0</span>
+          <span>{footerCredits}</span>
           <button onClick={scrollToTop} className="back-to-top">
             Back to top ↑
           </button>

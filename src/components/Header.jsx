@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import { ThemeContext } from "../App";
+import { useSiteSettings } from "../hooks/useSupabase";
 
 const Header = () => {
+  const { settings, loading } = useSiteSettings();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -10,34 +12,27 @@ const Header = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
 
-      // SMOOTH GRID FADE - grid semakin pudar saat scroll ke bawah
       const gridPattern = document.querySelector(".grid-pattern");
       const gridGlow = document.querySelector(".grid-glow");
 
       if (gridPattern) {
         const scrollY = window.scrollY;
-        const maxScroll =
-          document.documentElement.scrollHeight - window.innerHeight;
-        // Progress 0 = top, 1 = bottom
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
         const progress = Math.min(scrollY / maxScroll, 1);
-        // Grid opacity: mulai 1, semakin kecil sampai 0.1 di bottom
         const newOpacity = Math.max(0, 1 - progress * 0.9);
         gridPattern.style.opacity = newOpacity;
       }
 
       if (gridGlow) {
         const scrollY = window.scrollY;
-        const maxScroll =
-          document.documentElement.scrollHeight - window.innerHeight;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
         const progress = Math.min(scrollY / maxScroll, 1);
-        // Glow opacity: mulai 0.1, semakin kecil sampai 0 di bottom
         const newOpacity = Math.max(0, 0.1 - progress * 0.1);
         gridGlow.style.opacity = newOpacity;
       }
     };
 
     window.addEventListener("scroll", handleScroll);
-    // Panggil sekali untuk set initial opacity
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
@@ -61,6 +56,23 @@ const Header = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Data dari database dengan fallback
+  const profileName = settings?.profile_name || "Bima Yufianto";
+  const profileRole = settings?.profile_role || "CNC / CAM PROGRAMMER";
+
+  if (loading) {
+    return (
+      <header className="header" style={{ background: "transparent" }}>
+        <div className="header-content">
+          <div className="logo">
+            <span className="logo-name">Loading...</span>
+            <span className="logo-title">...</span>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <>
       <div className="header-grid-bg">
@@ -81,13 +93,13 @@ const Header = () => {
         }}
       >
         <div className="header-content">
-          {/* Logo - KIRI */}
+          {/* Logo - KIRI (dinamis dari CMS) */}
           <div className="logo">
-            <span className="logo-name">Bima Yufianto</span>
-            <span className="logo-title">CNC / CAM PROGRAMMER</span>
+            <span className="logo-name">{profileName}</span>
+            <span className="logo-title">{profileRole}</span>
           </div>
 
-          {/* Desktop Navigation - TENGAH (hidden on mobile) */}
+          {/* Desktop Navigation - TENGAH */}
           <div className="desktop-nav">
             <div className="nav-links-center">
               <button onClick={() => scrollToSection("work")}>
@@ -109,7 +121,7 @@ const Header = () => {
             </div>
           </div>
 
-          {/* Right Section - Toggle Switch & Hamburger Menu (KANAN) */}
+          {/* Right Section */}
           <div className="nav-right">
             <label className="theme-switch">
               <input
@@ -130,7 +142,6 @@ const Header = () => {
               Let's Talk
             </button>
 
-            {/* Hamburger Menu Button - KANAN ATAS */}
             <button
               className={`hamburger-btn ${isMobileMenuOpen ? "active" : ""}`}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
