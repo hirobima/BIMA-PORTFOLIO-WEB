@@ -74,12 +74,6 @@ const Footer = () => {
             <li>
               <a href={`https://wa.me/${whatsappRaw}`}>{whatsapp}</a>
             </li>
-            <li>
-              <button onClick={() => window.open("#", "_blank")}>Fiverr</button>
-            </li>
-            <li>
-              <button onClick={() => window.open("#", "_blank")}>Upwork</button>
-            </li>
           </ul>
         </div>
       </div>
