@@ -6,26 +6,25 @@ const Admin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState('hero');
-  
   const [projects, setProjects] = useState([]);
   const [settings, setSettings] = useState(null);
   const [skills, setSkills] = useState([]);
   const [socialLinks, setSocialLinks] = useState([]);
-  
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+
+  // Form states
   const [editingProject, setEditingProject] = useState(null);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [showSkillForm, setShowSkillForm] = useState(false);
   const [editingSkill, setEditingSkill] = useState(null);
   const [showSocialForm, setShowSocialForm] = useState(false);
   const [editingSocial, setEditingSocial] = useState(null);
-  
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
 
   const [projectForm, setProjectForm] = useState({
-  code: '', title: '', description: '', category: '', software: '',
-  tags: '', image_url: '', gallery_images: '', order: 0, is_published: true, type: 'toolpath', tools: ''
-});
+    code: '', title: '', description: '', category: '', software: '',
+    tags: '', image_url: '', gallery_images: '', order: 0, is_published: true, type: 'toolpath', tools: ''
+  });
 
   const [skillForm, setSkillForm] = useState({
     name: '', percentage: 0, description: '', order: 0, is_active: true
@@ -88,7 +87,7 @@ const Admin = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (email === 'hirobima28@gmail.com' && password === 'Momogie28') {
+    if (email === 'admin@bima.com' && password === 'bimacnc2024') {
       setIsAuthenticated(true);
       localStorage.setItem('admin_auth', 'true');
       fetchAllData();
@@ -136,19 +135,18 @@ const Admin = () => {
   };
 
   const handleSaveProject = async () => {
-  setLoading(true);
-  const tagsArray = projectForm.tags.split(',').map(t => t.trim()).filter(t => t);
-  const toolsArray = projectForm.tools.split(',').map(t => t.trim()).filter(t => t);
-  const galleryArray = projectForm.gallery_images.split(',').map(url => url.trim()).filter(url => url);
-  
-  const projectData = {
-    code: projectForm.code, title: projectForm.title, description: projectForm.description,
-    category: projectForm.category, software: projectForm.software, tags: tagsArray,
-    image_url: projectForm.image_url, gallery_images: galleryArray, order: parseInt(projectForm.order) || 0,
-    is_published: projectForm.is_published, type: projectForm.type, tools: toolsArray,
-    updated_at: new Date().toISOString()
-  };
-  // ... dst (sisanya sama)
+    setLoading(true);
+    const tagsArray = projectForm.tags.split(',').map(t => t.trim()).filter(t => t);
+    const toolsArray = projectForm.tools.split(',').map(t => t.trim()).filter(t => t);
+    const galleryArray = projectForm.gallery_images.split(',').map(url => url.trim()).filter(url => url);
+    
+    const projectData = {
+      code: projectForm.code, title: projectForm.title, description: projectForm.description,
+      category: projectForm.category, software: projectForm.software, tags: tagsArray,
+      image_url: projectForm.image_url, gallery_images: galleryArray, order: parseInt(projectForm.order) || 0,
+      is_published: projectForm.is_published, type: projectForm.type, tools: toolsArray,
+      updated_at: new Date().toISOString()
+    };
 
     let error;
     if (editingProject) {
@@ -175,20 +173,21 @@ const Admin = () => {
   };
 
   const handleEditProject = (project) => {
-  setEditingProject(project);
-  setProjectForm({
-    code: project.code || '', title: project.title || '', description: project.description || '',
-    category: project.category || '', software: project.software || '', tags: (project.tags || []).join(', '),
-    image_url: project.image_url || '', gallery_images: (project.gallery_images || []).join(', '), order: project.order || 0, is_published: project.is_published !== false,
-    type: project.type || 'toolpath', tools: (project.tools || []).join(', ')
-  });
-  setShowProjectForm(true);
-};
+    setEditingProject(project);
+    setProjectForm({
+      code: project.code || '', title: project.title || '', description: project.description || '',
+      category: project.category || '', software: project.software || '', tags: (project.tags || []).join(', '),
+      image_url: project.image_url || '', gallery_images: (project.gallery_images || []).join(', '),
+      order: project.order || 0, is_published: project.is_published !== false,
+      type: project.type || 'toolpath', tools: (project.tools || []).join(', ')
+    });
+    setShowProjectForm(true);
+  };
 
   const resetProjectForm = () => {
     setEditingProject(null);
     setProjectForm({ code: '', title: '', description: '', category: '', software: '',
-      tags: '', image_url: '', order: 0, is_published: true, type: 'toolpath', tools: '' });
+      tags: '', image_url: '', gallery_images: '', order: 0, is_published: true, type: 'toolpath', tools: '' });
     setShowProjectForm(false);
   };
 
@@ -279,22 +278,59 @@ const Admin = () => {
     setShowSocialForm(false);
   };
 
+  // ==================== UPDATE SETTINGS (INI YANG DIPERBAIKI) ====================
   const handleUpdateSettings = async () => {
-    setLoading(true);
-    const { error } = await supabase
-      .from('site_settings')
-      .update({
-        ...settings,
-        about_checklist: checklistItems,
-        software_stack: softwareItems,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', 1);
-    
-    if (error) showMessage('error', error.message);
-    else showMessage('success', 'All settings updated successfully!');
-    setLoading(false);
+  setLoading(true);
+  
+  // Ambil nilai dari form saat ini
+  const updatedSettings = {
+    hero_title: settings?.hero_title || 'Precision in Every Cut.',
+    hero_subtitle: settings?.hero_subtitle || '— CNC PROGRAMMER & PRODUCT DESIGNER',
+    hero_description: settings?.hero_description || '',
+    profile_name: settings?.profile_name || 'Bima Yufianto',
+    profile_role: settings?.profile_role || 'CNC Programmer & Product Designer',
+    email: settings?.email || 'hirobima28@gmail.com',
+    whatsapp: settings?.whatsapp || '+62 895 0592 0370',
+    whatsapp_raw: settings?.whatsapp_raw || '6289505920370',
+    location: settings?.location || 'Indonesia',
+    years_experience: settings?.years_experience || '7+',
+    projects_delivered: settings?.projects_delivered || '120+',
+    machines_programmed: settings?.machines_programmed || '10+',
+    hero_button_text: settings?.hero_button_text || 'View Projects',
+    hero_button2_text: settings?.hero_button2_text || 'Start a project',
+    footer_name: settings?.footer_name || 'Bima Yufianto',
+    footer_title: settings?.footer_title || 'CNC PROGRAMMER & PRODUCT DESIGNER',
+    footer_bio: settings?.footer_bio || '',
+    footer_copyright: settings?.footer_copyright || '© 2026 BIMA YUFIANTO. ALL RIGHTS RESERVED.',
+    footer_credits: settings?.footer_credits || 'BUILT WITH PRECISION - V1.0',
+    about_description: settings?.about_description || '',
+    about_long: settings?.about_long || '',
+    about_checklist: checklistItems,
+    software_stack: softwareItems,
+    hero_image_url: settings?.hero_image_url || '',
+    updated_at: new Date().toISOString()
   };
+
+  console.log('Data yang akan disimpan:', updatedSettings);
+
+  const { error } = await supabase
+    .from('site_settings')
+    .update(updatedSettings)
+    .eq('id', 1);
+
+  if (error) {
+    console.error('Error:', error);
+    showMessage('error', 'Gagal: ' + error.message);
+  } else {
+    console.log('Berhasil disimpan!');
+    showMessage('success', 'All settings updated successfully!');
+    // Ambil data terbaru dari database
+    const { data } = await supabase.from('site_settings').select('*').single();
+    setSettings(data);
+  }
+  
+  setLoading(false);
+};
 
   if (!isAuthenticated) {
     return (
@@ -309,7 +345,7 @@ const Admin = () => {
           <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={styles.input} required />
           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={styles.input} required />
           <button type="submit" style={styles.loginButton}>Login</button>
-          <p style={styles.demoCreds}>Hanya Admin yang boleh masuk</p>
+          <p style={styles.demoCreds}>admin@bima.com / bimacnc2024</p>
         </form>
       </div>
     );
@@ -340,35 +376,26 @@ const Admin = () => {
 
       {loading && <div style={styles.loading}>Loading...</div>}
 
+      {/* HERO TAB */}
       {activeTab === 'hero' && settings && !loading && (
         <div style={styles.sectionCard}>
           <h2 style={styles.sectionTitle}>🏠 Hero Section</h2>
           <div style={styles.formGrid2}>
-            <div>
-        <label style={styles.label}>🖼️ Hero Image / CAD Box Image</label>
-        <input 
-          value={settings.hero_image_url || ''} 
-          onChange={(e) => setSettings({...settings, hero_image_url: e.target.value})} 
-          style={styles.input} 
-          placeholder="https://contoh.com/gambar.jpg"
-        />
-        <small style={{color: '#666', fontSize: '11px'}}>
-          Masukkan URL gambar untuk mengganti tampilan CAD box
-        </small>
-      </div>
             <div><label style={styles.label}>Hero Subtitle</label><input value={settings.hero_subtitle || ''} onChange={(e) => setSettings({...settings, hero_subtitle: e.target.value})} style={styles.input} /></div>
             <div><label style={styles.label}>Hero Description</label><textarea rows="3" value={settings.hero_description || ''} onChange={(e) => setSettings({...settings, hero_description: e.target.value})} style={styles.textarea} /></div>
-            <div><label style={styles.label}>Years Experience</label><input value={settings.years_experience || '8+'} onChange={(e) => setSettings({...settings, years_experience: e.target.value})} style={styles.input} /></div>
+            <div><label style={styles.label}>Years Experience</label><input value={settings.years_experience || '7+'} onChange={(e) => setSettings({...settings, years_experience: e.target.value})} style={styles.input} /></div>
             <div><label style={styles.label}>Projects Delivered</label><input value={settings.projects_delivered || '120+'} onChange={(e) => setSettings({...settings, projects_delivered: e.target.value})} style={styles.input} /></div>
-            <div><label style={styles.label}>Machines Programmed</label><input value={settings.machines_programmed || '15+'} onChange={(e) => setSettings({...settings, machines_programmed: e.target.value})} style={styles.input} /></div>
+            <div><label style={styles.label}>Machines Programmed</label><input value={settings.machines_programmed || '10+'} onChange={(e) => setSettings({...settings, machines_programmed: e.target.value})} style={styles.input} /></div>
             <div><label style={styles.label}>Location</label><input value={settings.location || 'Indonesia'} onChange={(e) => setSettings({...settings, location: e.target.value})} style={styles.input} /></div>
             <div><label style={styles.label}>Email</label><input value={settings.email || ''} onChange={(e) => setSettings({...settings, email: e.target.value})} style={styles.input} /></div>
             <div><label style={styles.label}>WhatsApp</label><input value={settings.whatsapp || ''} onChange={(e) => setSettings({...settings, whatsapp: e.target.value})} style={styles.input} /></div>
+            <div><label style={styles.label}>Hero Image URL</label><input value={settings.hero_image_url || ''} onChange={(e) => setSettings({...settings, hero_image_url: e.target.value})} style={styles.input} placeholder="https://contoh.com/gambar.jpg" /></div>
           </div>
           <button onClick={handleUpdateSettings} style={styles.saveButton}>Save Hero Section</button>
         </div>
       )}
 
+      {/* ABOUT TAB */}
       {activeTab === 'about' && settings && !loading && (
         <div style={styles.sectionCard}>
           <h2 style={styles.sectionTitle}>📖 About Section</h2>
@@ -407,6 +434,7 @@ const Admin = () => {
         </div>
       )}
 
+      {/* SKILLS TAB */}
       {activeTab === 'skills' && !loading && (
         <div>
           <div style={styles.sectionHeader}><h2 style={styles.sectionTitle}>Skills ({skills.length})</h2><button onClick={() => { resetSkillForm(); setShowSkillForm(true); }} style={styles.addButton}>+ Add Skill</button></div>
@@ -427,6 +455,7 @@ const Admin = () => {
         </div>
       )}
 
+      {/* PROJECTS TAB */}
       {activeTab === 'projects' && !loading && (
         <div>
           <div style={styles.sectionHeader}><h2 style={styles.sectionTitle}>Projects ({projects.length})</h2><button onClick={() => { resetProjectForm(); setShowProjectForm(true); }} style={styles.addButton}>+ Add Project</button></div>
@@ -439,15 +468,7 @@ const Admin = () => {
               <input placeholder="Software" value={projectForm.software} onChange={(e) => setProjectForm({...projectForm, software: e.target.value})} style={styles.input} />
               <input placeholder="Tags (comma)" value={projectForm.tags} onChange={(e) => setProjectForm({...projectForm, tags: e.target.value})} style={styles.input} />
               <input placeholder="Image URL" value={projectForm.image_url} onChange={(e) => setProjectForm({...projectForm, image_url: e.target.value})} style={styles.input} />
-              <textarea 
-  placeholder="Gallery Images (pisahkan dengan koma)&#10;Contoh: https://gambar1.jpg, https://gambar2.jpg, https://gambar3.jpg" 
-  value={projectForm.gallery_images}
-  onChange={(e) => setProjectForm({...projectForm, gallery_images: e.target.value})}
-  style={{...styles.textarea, minHeight: '80px'}}
-/>
-<small style={{color: '#666', fontSize: '11px'}}>
-  📸 Masukkan URL gambar proses (dari awal sampai jadi), pisahkan dengan koma
-</small>
+              <textarea placeholder="Gallery Images (comma separated URLs)" value={projectForm.gallery_images} onChange={(e) => setProjectForm({...projectForm, gallery_images: e.target.value})} style={{...styles.textarea, minHeight: '60px'}} />
               <input type="number" placeholder="Order" value={projectForm.order} onChange={(e) => setProjectForm({...projectForm, order: parseInt(e.target.value) || 0})} style={styles.input} />
               <label style={styles.checkboxLabel}><input type="checkbox" checked={projectForm.is_published} onChange={(e) => setProjectForm({...projectForm, is_published: e.target.checked})} /> Published</label></div>
               <div style={styles.modalButtons}><button onClick={handleSaveProject} style={styles.saveButton}>Save</button><button onClick={resetProjectForm} style={styles.cancelButton}>Cancel</button></div>
@@ -460,6 +481,7 @@ const Admin = () => {
         </div>
       )}
 
+      {/* FOOTER TAB */}
       {activeTab === 'footer' && settings && !loading && (
         <div style={styles.sectionCard}>
           <h2 style={styles.sectionTitle}>📞 Footer Section</h2>
@@ -474,6 +496,7 @@ const Admin = () => {
         </div>
       )}
 
+      {/* CONTACT TAB */}
       {activeTab === 'contact' && settings && !loading && (
         <div style={styles.sectionCard}>
           <h2 style={styles.sectionTitle}>✉️ Contact Section</h2>
@@ -487,6 +510,7 @@ const Admin = () => {
         </div>
       )}
 
+      {/* SOCIAL LINKS TAB */}
       {activeTab === 'social' && !loading && (
         <div>
           <div style={styles.sectionHeader}><h2 style={styles.sectionTitle}>Social Links ({socialLinks.length})</h2><button onClick={() => { resetSocialForm(); setShowSocialForm(true); }} style={styles.addButton}>+ Add Social Link</button></div>
@@ -507,6 +531,7 @@ const Admin = () => {
   );
 };
 
+// ==================== STYLES ====================
 const styles = {
   container: { padding: '80px 24px 40px', maxWidth: '1400px', margin: '0 auto', background: '#110f0e', minHeight: '100vh' },
   loginContainer: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#110f0e' },
