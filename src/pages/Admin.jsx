@@ -13,7 +13,6 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  // Form states
   const [editingProject, setEditingProject] = useState(null);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [showSkillForm, setShowSkillForm] = useState(false);
@@ -65,13 +64,8 @@ const Admin = () => {
     const { data } = await supabase.from('site_settings').select('*').single();
     setSettings(data);
     if (data) {
-      setChecklistItems(data.about_checklist || [
-        'Production-ready toolpaths with optimized feeds and speeds',
-        'Full pipeline from CAD model to post-processed G-code',
-        'Experience across furniture, joinery and precision components',
-        'Fluent in ZW3D, Aspire, VCarve, Fusion 360, and PowerMill'
-      ]);
-      setSoftwareItems(data.software_stack || ['ZW3D', 'Aspire', 'VCarve', 'Fusion 360', 'PowerMill', 'SolidWorks', 'AutoCAD', 'Rhino']);
+      setChecklistItems(data.about_checklist || []);
+      setSoftwareItems(data.software_stack || []);
     }
   };
 
@@ -278,59 +272,72 @@ const Admin = () => {
     setShowSocialForm(false);
   };
 
-  // ==================== UPDATE SETTINGS (INI YANG DIPERBAIKI) ====================
+  // ==================== UPDATE SETTINGS (DIPERBAIKI) ====================
   const handleUpdateSettings = async () => {
-  setLoading(true);
-  
-  // Ambil nilai dari form saat ini
-  const updatedSettings = {
-    hero_title: settings?.hero_title || 'Precision in Every Cut.',
-    hero_subtitle: settings?.hero_subtitle || '— CNC PROGRAMMER & PRODUCT DESIGNER',
-    hero_description: settings?.hero_description || '',
-    profile_name: settings?.profile_name || 'Bima Yufianto',
-    profile_role: settings?.profile_role || 'CNC Programmer & Product Designer',
-    email: settings?.email || 'hirobima28@gmail.com',
-    whatsapp: settings?.whatsapp || '+62 895 0592 0370',
-    whatsapp_raw: settings?.whatsapp_raw || '6289505920370',
-    location: settings?.location || 'Indonesia',
-    years_experience: settings?.years_experience || '7+',
-    projects_delivered: settings?.projects_delivered || '120+',
-    machines_programmed: settings?.machines_programmed || '10+',
-    hero_button_text: settings?.hero_button_text || 'View Projects',
-    hero_button2_text: settings?.hero_button2_text || 'Start a project',
-    footer_name: settings?.footer_name || 'Bima Yufianto',
-    footer_title: settings?.footer_title || 'CNC PROGRAMMER & PRODUCT DESIGNER',
-    footer_bio: settings?.footer_bio || '',
-    footer_copyright: settings?.footer_copyright || '© 2026 BIMA YUFIANTO. ALL RIGHTS RESERVED.',
-    footer_credits: settings?.footer_credits || 'BUILT WITH PRECISION - V1.0',
-    about_description: settings?.about_description || '',
-    about_long: settings?.about_long || '',
-    about_checklist: checklistItems,
-    software_stack: softwareItems,
-    hero_image_url: settings?.hero_image_url || '',
-    updated_at: new Date().toISOString()
+    setLoading(true);
+    
+    // Pastikan settings tidak null
+    if (!settings) {
+      showMessage('error', 'Data settings belum dimuat');
+      setLoading(false);
+      return;
+    }
+
+    // Data yang akan diupdate
+    const updatedSettings = {
+      hero_title: settings.hero_title || 'Precision in Every Cut.',
+      hero_subtitle: settings.hero_subtitle || '— CNC PROGRAMMER & PRODUCT DESIGNER',
+      hero_description: settings.hero_description || '',
+      profile_name: settings.profile_name || 'Bima Yufianto',
+      profile_role: settings.profile_role || 'CNC Programmer & Product Designer',
+      email: settings.email || 'hirobima28@gmail.com',
+      whatsapp: settings.whatsapp || '+62 895 0592 0370',
+      whatsapp_raw: settings.whatsapp_raw || '6289505920370',
+      location: settings.location || 'Indonesia',
+      years_experience: settings.years_experience || '7+',
+      projects_delivered: settings.projects_delivered || '120+',
+      machines_programmed: settings.machines_programmed || '10+',
+      hero_button_text: settings.hero_button_text || 'View Projects',
+      hero_button2_text: settings.hero_button2_text || 'Start a project',
+      footer_name: settings.footer_name || 'Bima Yufianto',
+      footer_title: settings.footer_title || 'CNC PROGRAMMER & PRODUCT DESIGNER',
+      footer_bio: settings.footer_bio || '',
+      footer_copyright: settings.footer_copyright || '© 2026 BIMA YUFIANTO. ALL RIGHTS RESERVED.',
+      footer_credits: settings.footer_credits || 'BUILT WITH PRECISION - V1.0',
+      about_description: settings.about_description || '',
+      about_long: settings.about_long || '',
+      about_checklist: checklistItems,
+      software_stack: softwareItems,
+      hero_image_url: settings.hero_image_url || '',
+      updated_at: new Date().toISOString()
+    };
+
+    console.log('📤 MENYIMPAN DATA:', updatedSettings);
+
+    try {
+      const { error, data } = await supabase
+        .from('site_settings')
+        .update(updatedSettings)
+        .eq('id', 1)
+        .select();
+
+      if (error) {
+        console.error('❌ ERROR SAVE:', error);
+        showMessage('error', 'Gagal: ' + error.message);
+      } else {
+        console.log('✅ BERHASIL DISIMPAN:', data);
+        showMessage('success', 'All settings updated successfully!');
+        // Ambil data terbaru
+        const { data: newData } = await supabase.from('site_settings').select('*').single();
+        setSettings(newData);
+      }
+    } catch (err) {
+      console.error('❌ ERROR:', err);
+      showMessage('error', 'Terjadi kesalahan: ' + err.message);
+    }
+    
+    setLoading(false);
   };
-
-  console.log('Data yang akan disimpan:', updatedSettings);
-
-  const { error } = await supabase
-    .from('site_settings')
-    .update(updatedSettings)
-    .eq('id', 1);
-
-  if (error) {
-    console.error('Error:', error);
-    showMessage('error', 'Gagal: ' + error.message);
-  } else {
-    console.log('Berhasil disimpan!');
-    showMessage('success', 'All settings updated successfully!');
-    // Ambil data terbaru dari database
-    const { data } = await supabase.from('site_settings').select('*').single();
-    setSettings(data);
-  }
-  
-  setLoading(false);
-};
 
   if (!isAuthenticated) {
     return (
@@ -376,7 +383,6 @@ const Admin = () => {
 
       {loading && <div style={styles.loading}>Loading...</div>}
 
-      {/* HERO TAB */}
       {activeTab === 'hero' && settings && !loading && (
         <div style={styles.sectionCard}>
           <h2 style={styles.sectionTitle}>🏠 Hero Section</h2>
@@ -395,7 +401,6 @@ const Admin = () => {
         </div>
       )}
 
-      {/* ABOUT TAB */}
       {activeTab === 'about' && settings && !loading && (
         <div style={styles.sectionCard}>
           <h2 style={styles.sectionTitle}>📖 About Section</h2>
@@ -434,7 +439,6 @@ const Admin = () => {
         </div>
       )}
 
-      {/* SKILLS TAB */}
       {activeTab === 'skills' && !loading && (
         <div>
           <div style={styles.sectionHeader}><h2 style={styles.sectionTitle}>Skills ({skills.length})</h2><button onClick={() => { resetSkillForm(); setShowSkillForm(true); }} style={styles.addButton}>+ Add Skill</button></div>
@@ -455,7 +459,6 @@ const Admin = () => {
         </div>
       )}
 
-      {/* PROJECTS TAB */}
       {activeTab === 'projects' && !loading && (
         <div>
           <div style={styles.sectionHeader}><h2 style={styles.sectionTitle}>Projects ({projects.length})</h2><button onClick={() => { resetProjectForm(); setShowProjectForm(true); }} style={styles.addButton}>+ Add Project</button></div>
@@ -481,7 +484,6 @@ const Admin = () => {
         </div>
       )}
 
-      {/* FOOTER TAB */}
       {activeTab === 'footer' && settings && !loading && (
         <div style={styles.sectionCard}>
           <h2 style={styles.sectionTitle}>📞 Footer Section</h2>
@@ -496,7 +498,6 @@ const Admin = () => {
         </div>
       )}
 
-      {/* CONTACT TAB */}
       {activeTab === 'contact' && settings && !loading && (
         <div style={styles.sectionCard}>
           <h2 style={styles.sectionTitle}>✉️ Contact Section</h2>
@@ -510,7 +511,6 @@ const Admin = () => {
         </div>
       )}
 
-      {/* SOCIAL LINKS TAB */}
       {activeTab === 'social' && !loading && (
         <div>
           <div style={styles.sectionHeader}><h2 style={styles.sectionTitle}>Social Links ({socialLinks.length})</h2><button onClick={() => { resetSocialForm(); setShowSocialForm(true); }} style={styles.addButton}>+ Add Social Link</button></div>
@@ -531,7 +531,6 @@ const Admin = () => {
   );
 };
 
-// ==================== STYLES ====================
 const styles = {
   container: { padding: '80px 24px 40px', maxWidth: '1400px', margin: '0 auto', background: '#110f0e', minHeight: '100vh' },
   loginContainer: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#110f0e' },
