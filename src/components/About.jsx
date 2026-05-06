@@ -48,8 +48,7 @@ const About = () => {
             className="section-title"
             style={{ textAlign: "left", fontSize: "clamp(28px, 5vw, 48px)" }}
           >
-            A quiet, precise <br />
-            approach to fabrication.
+            A quiet, this is the right place to make your dreams come true.
           </h2>
         </div>
 
