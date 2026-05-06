@@ -125,7 +125,7 @@ body {
   left: 0;
   right: 0;
   z-index: 100;
-  padding: 12px 20px;
+  padding: 6px 20px;
   background: transparent;
   transition: all 0.3s ease;
 }
@@ -145,14 +145,14 @@ body {
 }
 
 .logo-name {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   color: var(--text-primary);
 }
 
 .logo-title {
-  font-size: 7px;
+  font-size: 10px;
   color: var(--text-secondary);
   letter-spacing: 1px;
   margin-top: 2px;
@@ -165,7 +165,7 @@ body {
 
 .nav-links-center {
   display: flex;
-  gap: 24px;
+  gap: 26px;
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
   padding: 6px 20px;
@@ -196,7 +196,7 @@ body {
 }
 
 .nav-text {
-  font-size: 11px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--text-primary);
 }
