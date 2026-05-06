@@ -114,6 +114,11 @@ const ProjectGallery = () => {
                   📸 {project.gallery_images.length}
                 </span>
               )}
+              {project.video_url && (
+                <span className="video-badge">
+                  🎬 VIDEO
+                </span>
+              )}
             </div>
             <div className="project-content">
               <h3 className="project-title">{project.title}</h3>
@@ -124,7 +129,7 @@ const ProjectGallery = () => {
         ))}
       </div>
 
-      {/* POPUP MODAL DENGAN GALLERY */}
+      {/* ==================== POPUP MODAL DENGAN VIDEO & GALLERY ==================== */}
       {selectedProject && (
         <div 
           style={{
@@ -152,7 +157,7 @@ const ProjectGallery = () => {
             backgroundColor: "#110f0e",
             border: "1px solid rgba(255,255,255,0.1)",
             borderRadius: "20px",
-            maxWidth: "900px",
+            maxWidth: "1000px",
             width: "100%",
             maxHeight: "90vh",
             display: "flex",
@@ -197,30 +202,46 @@ const ProjectGallery = () => {
               ✕
             </button>
 
-            {/* Area Gambar */}
+            {/* Area Video / Gambar */}
             <div style={{
               position: "relative",
               backgroundColor: "#000",
-              minHeight: "400px",
+              minHeight: "450px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
             }}>
               
-              <img 
-                src={selectedProject.gallery_images && selectedProject.gallery_images[currentImageIndex] 
-                  ? selectedProject.gallery_images[currentImageIndex] 
-                  : selectedProject.image_url}
-                alt={selectedProject.title}
-                style={{
-                  width: "100%",
-                  maxHeight: "500px",
-                  objectFit: "contain",
-                }}
-              />
+              {/* Jika ada video, tampilkan video */}
+              {selectedProject.video_url ? (
+                <iframe
+                  src={selectedProject.video_url}
+                  title={`${selectedProject.title} - Process Video`}
+                  style={{
+                    width: "100%",
+                    aspectRatio: "16/9",
+                    border: "none",
+                  }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                /* Jika tidak ada video, tampilkan gallery gambar */
+                <img 
+                  src={selectedProject.gallery_images && selectedProject.gallery_images[currentImageIndex] 
+                    ? selectedProject.gallery_images[currentImageIndex] 
+                    : selectedProject.image_url}
+                  alt={selectedProject.title}
+                  style={{
+                    width: "100%",
+                    maxHeight: "500px",
+                    objectFit: "contain",
+                  }}
+                />
+              )}
 
-              {/* Tombol Navigasi */}
-              {selectedProject.gallery_images && selectedProject.gallery_images.length > 1 && (
+              {/* Tombol Navigasi (hanya untuk gallery, bukan video) */}
+              {!selectedProject.video_url && selectedProject.gallery_images && selectedProject.gallery_images.length > 1 && (
                 <>
                   <button 
                     onClick={prevImage}
@@ -278,8 +299,8 @@ const ProjectGallery = () => {
               )}
             </div>
 
-            {/* Counter Gambar */}
-            {selectedProject.gallery_images && selectedProject.gallery_images.length > 1 && (
+            {/* Counter Gambar (hanya untuk gallery) */}
+            {!selectedProject.video_url && selectedProject.gallery_images && selectedProject.gallery_images.length > 1 && (
               <div style={{
                 position: "absolute",
                 bottom: "20px",
@@ -296,8 +317,8 @@ const ProjectGallery = () => {
               </div>
             )}
 
-            {/* Thumbnail Strip */}
-            {selectedProject.gallery_images && selectedProject.gallery_images.length > 1 && (
+            {/* Thumbnail Strip (hanya untuk gallery) */}
+            {!selectedProject.video_url && selectedProject.gallery_images && selectedProject.gallery_images.length > 1 && (
               <div style={{
                 display: "flex",
                 gap: "10px",
@@ -328,6 +349,26 @@ const ProjectGallery = () => {
                     />
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* Badge Video (jika ada video) */}
+            {selectedProject.video_url && (
+              <div style={{
+                position: "absolute",
+                bottom: "20px",
+                left: "20px",
+                backgroundColor: "rgba(0,0,0,0.7)",
+                padding: "6px 14px",
+                borderRadius: "30px",
+                fontSize: "12px",
+                color: "#98a869",
+                zIndex: 15,
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}>
+                🎬 Process Video
               </div>
             )}
 
