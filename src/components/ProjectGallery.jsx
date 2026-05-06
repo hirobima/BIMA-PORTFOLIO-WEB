@@ -7,7 +7,7 @@ const ProjectGallery = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const filters = ["All Work", "CNC Router", "3 Axis", "4 Axis Rotary", "5 Axis", "Furniture Design"];
+  const filters = ["All Work", "3 Axis", "4 Axis Rotary", "5 Axis", "Furniture Design"];
 
   const filteredProjects = filter === "All Work" 
     ? projects 
@@ -78,7 +78,7 @@ const ProjectGallery = () => {
         <div className="section-number">02 / SELECTED WORK</div>
         <h2 className="section-title">Project Gallery</h2>
         <p className="section-description">
-          A curated set of CNC programs, toolpaths and fabrication workflows — organized by machining strategy and application.
+          A curated set of CNC programs, toolpaths and fabrication workflows organized by machining strategy and application.
         </p>
         <div className="project-count">{filteredProjects.length} PROJECTS</div>
       </div>

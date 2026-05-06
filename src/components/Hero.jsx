@@ -22,7 +22,7 @@ const Hero = () => {
   return (
     <div className="hero">
       <div className="hero-left">
-        <div className="hero-portfolio-tag">PORTFOLIO · 2026 · {settings?.location || 'INDONESIA'}</div>
+        <div className="hero-portfolio-tag"> CNC PROGRAMMING PORTFOLIO · 2026 · {settings?.location || 'INDONESIA'}</div>
 
         <h1 className="hero-title">
           Precision in <br />

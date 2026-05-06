@@ -20,7 +20,7 @@ const About = () => {
   const shortDesc = settings?.about_description || 
     "Experienced CNC programmer specializing in furniture production, precision cutting, and efficient toolpath strategies.";
   const longDesc = settings?.about_long ||
-    "I translate CAD designs into reliable, optimized CNC programs — from 3-axis routing to 5-axis complex joinery. My focus is on clean toolpaths, minimal waste, and production workflows that scale from prototype to series manufacturing.";
+    "I translate CAD designs into reliable, optimized CNC programs from 3-axis routing, 4-axis rotary to 5-axis complex joinery. My focus is on clean toolpaths, minimal waste, and production workflows that scale from prototype to series manufacturing.";
   
   const checklistItems = settings?.about_checklist || [
     "Production-ready toolpaths with optimized feeds and speeds",
