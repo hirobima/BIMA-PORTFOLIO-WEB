@@ -7,7 +7,7 @@ const ProjectGallery = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const filters = ["All Work", "3 Axis", "4 Axis Rotary", "5 Axis", "Furniture Design"];
+  const filters = ["All Work", "CNC Router", "3 Axis", "4 Axis Rotary", "5 Axis", "Furniture Design"];
 
   const filteredProjects = filter === "All Work" 
     ? projects 
@@ -78,7 +78,7 @@ const ProjectGallery = () => {
         <div className="section-number">02 / SELECTED WORK</div>
         <h2 className="section-title">Project Gallery</h2>
         <p className="section-description">
-          A curated set of CNC programs, toolpaths and fabrication workflows organized by machining strategy and application.
+          A curated set of CNC programs, toolpaths and fabrication workflows — organized by machining strategy and application.
         </p>
         <div className="project-count">{filteredProjects.length} PROJECTS</div>
       </div>
@@ -129,7 +129,7 @@ const ProjectGallery = () => {
         ))}
       </div>
 
-      {/* ==================== POPUP MODAL DENGAN VIDEO & GALLERY ==================== */}
+      {/* ==================== POPUP MODAL (VIDEO + GALLERY BERSAMAAN) ==================== */}
       {selectedProject && (
         <div 
           style={{
@@ -202,18 +202,12 @@ const ProjectGallery = () => {
               ✕
             </button>
 
-            {/* Area Video / Gambar */}
-            <div style={{
-              position: "relative",
-              backgroundColor: "#000",
-              minHeight: "450px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}>
-              
-              {/* Jika ada video, tampilkan video */}
-              {selectedProject.video_url ? (
+            {/* ==================== AREA VIDEO (jika ada) ==================== */}
+            {selectedProject.video_url && (
+              <div style={{
+                backgroundColor: "#000",
+                borderBottom: "1px solid #333",
+              }}>
                 <iframe
                   src={selectedProject.video_url}
                   title={`${selectedProject.title} - Process Video`}
@@ -225,157 +219,157 @@ const ProjectGallery = () => {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
-              ) : (
-                /* Jika tidak ada video, tampilkan gallery gambar */
-                <img 
-                  src={selectedProject.gallery_images && selectedProject.gallery_images[currentImageIndex] 
-                    ? selectedProject.gallery_images[currentImageIndex] 
-                    : selectedProject.image_url}
-                  alt={selectedProject.title}
-                  style={{
-                    width: "100%",
-                    maxHeight: "500px",
-                    objectFit: "contain",
-                  }}
-                />
-              )}
-
-              {/* Tombol Navigasi (hanya untuk gallery, bukan video) */}
-              {!selectedProject.video_url && selectedProject.gallery_images && selectedProject.gallery_images.length > 1 && (
-                <>
-                  <button 
-                    onClick={prevImage}
-                    style={{
-                      position: "absolute",
-                      left: "16px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      width: "44px",
-                      height: "44px",
-                      backgroundColor: "rgba(0,0,0,0.6)",
-                      border: "1px solid rgba(255,255,255,0.2)",
-                      borderRadius: "50%",
-                      color: "#fff",
-                      fontSize: "24px",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      transition: "all 0.3s",
-                      zIndex: 10,
-                    }}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = "#98a869"}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = "rgba(0,0,0,0.6)"}
-                  >
-                    ‹
-                  </button>
-                  <button 
-                    onClick={nextImage}
-                    style={{
-                      position: "absolute",
-                      right: "16px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      width: "44px",
-                      height: "44px",
-                      backgroundColor: "rgba(0,0,0,0.6)",
-                      border: "1px solid rgba(255,255,255,0.2)",
-                      borderRadius: "50%",
-                      color: "#fff",
-                      fontSize: "24px",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      transition: "all 0.3s",
-                      zIndex: 10,
-                    }}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = "#98a869"}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = "rgba(0,0,0,0.6)"}
-                  >
-                    ›
-                  </button>
-                </>
-              )}
-            </div>
-
-            {/* Counter Gambar (hanya untuk gallery) */}
-            {!selectedProject.video_url && selectedProject.gallery_images && selectedProject.gallery_images.length > 1 && (
-              <div style={{
-                position: "absolute",
-                bottom: "20px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                backgroundColor: "rgba(0,0,0,0.7)",
-                padding: "6px 14px",
-                borderRadius: "30px",
-                fontSize: "12px",
-                color: "#fff",
-                zIndex: 15,
-              }}>
-                {currentImageIndex + 1} / {selectedProject.gallery_images.length}
+                <div style={{
+                  padding: "8px 16px",
+                  backgroundColor: "#1a1a1a",
+                  fontSize: "12px",
+                  color: "#98a869",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}>
+                  <span>🎬</span> Process Video - CNC Machining in Action
+                </div>
               </div>
             )}
 
-            {/* Thumbnail Strip (hanya untuk gallery) */}
-            {!selectedProject.video_url && selectedProject.gallery_images && selectedProject.gallery_images.length > 1 && (
+            {/* ==================== AREA GALLERY GAMBAR ==================== */}
+            {selectedProject.gallery_images && selectedProject.gallery_images.length > 0 && (
               <div style={{
-                display: "flex",
-                gap: "10px",
-                padding: "16px",
-                overflowX: "auto",
-                backgroundColor: "#1a1a1a",
-                borderTop: "1px solid #333",
+                backgroundColor: "#000",
+                borderBottom: selectedProject.video_url ? "1px solid #333" : "none",
               }}>
-                {selectedProject.gallery_images.map((img, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => setCurrentImageIndex(idx)}
+                {/* Gambar Utama */}
+                <div style={{
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minHeight: "300px",
+                  backgroundColor: "#000",
+                }}>
+                  <img 
+                    src={selectedProject.gallery_images[currentImageIndex]} 
+                    alt={`${selectedProject.title} - ${currentImageIndex + 1}`}
                     style={{
-                      width: "70px",
-                      height: "70px",
-                      borderRadius: "8px",
-                      overflow: "hidden",
-                      cursor: "pointer",
-                      border: currentImageIndex === idx ? "2px solid #98a869" : "2px solid transparent",
-                      opacity: currentImageIndex === idx ? 1 : 0.6,
-                      transition: "all 0.2s",
+                      width: "100%",
+                      maxHeight: "400px",
+                      objectFit: "contain",
                     }}
-                  >
-                    <img 
-                      src={img} 
-                      alt={`Thumb ${idx + 1}`}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
+                  />
+
+                  {/* Tombol Navigasi Kiri/Kanan */}
+                  {selectedProject.gallery_images.length > 1 && (
+                    <>
+                      <button 
+                        onClick={prevImage}
+                        style={{
+                          position: "absolute",
+                          left: "16px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          width: "40px",
+                          height: "40px",
+                          backgroundColor: "rgba(0,0,0,0.6)",
+                          border: "1px solid rgba(255,255,255,0.2)",
+                          borderRadius: "50%",
+                          color: "#fff",
+                          fontSize: "24px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          transition: "all 0.3s",
+                          zIndex: 10,
+                        }}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = "#98a869"}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = "rgba(0,0,0,0.6)"}
+                      >
+                        ‹
+                      </button>
+                      <button 
+                        onClick={nextImage}
+                        style={{
+                          position: "absolute",
+                          right: "16px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          width: "40px",
+                          height: "40px",
+                          backgroundColor: "rgba(0,0,0,0.6)",
+                          border: "1px solid rgba(255,255,255,0.2)",
+                          borderRadius: "50%",
+                          color: "#fff",
+                          fontSize: "24px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          transition: "all 0.3s",
+                          zIndex: 10,
+                        }}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = "#98a869"}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = "rgba(0,0,0,0.6)"}
+                      >
+                        ›
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                {/* Counter Gambar */}
+                <div style={{
+                  textAlign: "center",
+                  padding: "8px",
+                  fontSize: "12px",
+                  color: "#888",
+                  backgroundColor: "#1a1a1a",
+                }}>
+                  {currentImageIndex + 1} / {selectedProject.gallery_images.length}
+                </div>
+
+                {/* Thumbnail Strip */}
+                {selectedProject.gallery_images.length > 1 && (
+                  <div style={{
+                    display: "flex",
+                    gap: "10px",
+                    padding: "16px",
+                    overflowX: "auto",
+                    backgroundColor: "#1a1a1a",
+                    borderTop: "1px solid #333",
+                  }}>
+                    {selectedProject.gallery_images.map((img, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => setCurrentImageIndex(idx)}
+                        style={{
+                          width: "70px",
+                          height: "70px",
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                          cursor: "pointer",
+                          border: currentImageIndex === idx ? "2px solid #98a869" : "2px solid transparent",
+                          opacity: currentImageIndex === idx ? 1 : 0.6,
+                          transition: "all 0.2s",
+                        }}
+                      >
+                        <img 
+                          src={img} 
+                          alt={`Thumb ${idx + 1}`}
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
             )}
 
-            {/* Badge Video (jika ada video) */}
-            {selectedProject.video_url && (
-              <div style={{
-                position: "absolute",
-                bottom: "20px",
-                left: "20px",
-                backgroundColor: "rgba(0,0,0,0.7)",
-                padding: "6px 14px",
-                borderRadius: "30px",
-                fontSize: "12px",
-                color: "#98a869",
-                zIndex: 15,
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}>
-                🎬 Process Video
-              </div>
-            )}
-
-            {/* Info Project */}
+            {/* ==================== INFO PROJECT ==================== */}
             <div style={{
               padding: "24px",
               overflowY: "auto",
+              maxHeight: "300px",
             }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
                 <span style={{ fontFamily: "monospace", fontSize: "11px", color: "#98a869", backgroundColor: "rgba(152,168,105,0.15)", padding: "4px 10px", borderRadius: "20px" }}>
