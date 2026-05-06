@@ -7,7 +7,7 @@ const ProjectGallery = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const filters = ["All Work", "CNC Router", "3 Axis", "4 Axis Rotary", "5 Axis", "Furniture Design"];
+  const filters = ["All Work", "3 Axis", "4 Axis Rotary", "5 Axis", "Furniture Design"];
 
   const filteredProjects = filter === "All Work" 
     ? projects 

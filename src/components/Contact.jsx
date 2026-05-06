@@ -89,8 +89,8 @@ const Contact = () => {
               fontSize: "clamp(13px, 4vw, 14px)",
             }}
           >
-            Have a furniture run, a joinery prototype, or a multi-axis
-            challenge? Send a brief — I'll reply within 24 hours.
+            Have a furniture run, a wood product prototype, or a other multi-axis
+            challenge? Send a brief I'll reply within 24 hours.
           </p>
 
           <div className="contact-info">
