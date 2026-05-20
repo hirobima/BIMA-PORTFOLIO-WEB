@@ -21,9 +21,10 @@ const Admin = () => {
   const [editingSocial, setEditingSocial] = useState(null);
 
   const [projectForm, setProjectForm] = useState({
-    code: '', title: '', description: '', category: '', software: '',
-    tags: '', image_url: '', gallery_images: '', order: 0, is_published: true, type: 'toolpath', tools: ''
-  });
+  code: '', title: '', description: '', category: '', software: '',
+  tags: '', image_url: '', video_urls: '', gallery_images: '', 
+  order: 0, is_published: true, type: 'toolpath', tools: ''
+});
 
   const [skillForm, setSkillForm] = useState({
     name: '', percentage: 0, description: '', order: 0, is_active: true
@@ -133,11 +134,12 @@ const Admin = () => {
     const tagsArray = projectForm.tags.split(',').map(t => t.trim()).filter(t => t);
     const toolsArray = projectForm.tools.split(',').map(t => t.trim()).filter(t => t);
     const galleryArray = projectForm.gallery_images.split(',').map(url => url.trim()).filter(url => url);
-    
+    const videoUrlsArray = projectForm.video_urls.split(',').map(url => url.trim()).filter(url => url);
+
     const projectData = {
       code: projectForm.code, title: projectForm.title, description: projectForm.description,
       category: projectForm.category, software: projectForm.software, tags: tagsArray,
-      image_url: projectForm.image_url, gallery_images: galleryArray, order: parseInt(projectForm.order) || 0,
+      image_url: projectForm.image_url, video_urls: videoUrlsArray, gallery_images: galleryArray, order: parseInt(projectForm.order) || 0,
       is_published: projectForm.is_published, type: projectForm.type, tools: toolsArray,
       updated_at: new Date().toISOString()
     };
@@ -171,7 +173,7 @@ const Admin = () => {
     setProjectForm({
       code: project.code || '', title: project.title || '', description: project.description || '',
       category: project.category || '', software: project.software || '', tags: (project.tags || []).join(', '),
-      image_url: project.image_url || '', gallery_images: (project.gallery_images || []).join(', '),
+      image_url: project.image_url || '', gallery_images: (project.gallery_images || '', video_urls: (project.video_urls || []).join(', '),
       order: project.order || 0, is_published: project.is_published !== false,
       type: project.type || 'toolpath', tools: (project.tools || []).join(', ')
     });
@@ -471,6 +473,15 @@ const Admin = () => {
               <input placeholder="Software" value={projectForm.software} onChange={(e) => setProjectForm({...projectForm, software: e.target.value})} style={styles.input} />
               <input placeholder="Tags (comma)" value={projectForm.tags} onChange={(e) => setProjectForm({...projectForm, tags: e.target.value})} style={styles.input} />
               <input placeholder="Image URL" value={projectForm.image_url} onChange={(e) => setProjectForm({...projectForm, image_url: e.target.value})} style={styles.input} />
+              <textarea 
+  placeholder="🎬 Video URLs (pisahkan dengan koma)&#10;Contoh: https://youtube.com/embed/xxx, https://youtube.com/embed/yyy" 
+  value={projectForm.video_urls}
+  onChange={(e) => setProjectForm({...projectForm, video_urls: e.target.value})}
+  style={{...styles.textarea, minHeight: '80px'}}
+/>
+<small style={{color: '#666', fontSize: '11px'}}>
+  Masukkan link YouTube embed, pisahkan dengan koma untuk multiple video
+</small>
               <textarea placeholder="Gallery Images (comma separated URLs)" value={projectForm.gallery_images} onChange={(e) => setProjectForm({...projectForm, gallery_images: e.target.value})} style={{...styles.textarea, minHeight: '60px'}} />
               <input type="number" placeholder="Order" value={projectForm.order} onChange={(e) => setProjectForm({...projectForm, order: parseInt(e.target.value) || 0})} style={styles.input} />
               <label style={styles.checkboxLabel}><input type="checkbox" checked={projectForm.is_published} onChange={(e) => setProjectForm({...projectForm, is_published: e.target.checked})} /> Published</label></div>
