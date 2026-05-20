@@ -6,8 +6,9 @@ const ProjectGallery = () => {
   const [filter, setFilter] = useState("All Work");
   const [selectedProject, setSelectedProject] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);  // 👈 UNTUK MULTIPLE VIDEOS
 
-  const filters = ["All Work", "3 Axis", "4 Axis Rotary", "5 Axis", "Furniture Design"];
+  const filters = ["All Work", "CNC Router", "3 Axis", "4 Axis Rotary", "5 Axis", "Furniture Design"];
 
   const filteredProjects = filter === "All Work" 
     ? projects 
@@ -18,6 +19,7 @@ const ProjectGallery = () => {
       if (e.key === 'Escape') {
         setSelectedProject(null);
         setCurrentImageIndex(0);
+        setCurrentVideoIndex(0);  // 👈 RESET VIDEO INDEX
       }
     };
     window.addEventListener('keydown', handleEscape);
@@ -27,6 +29,7 @@ const ProjectGallery = () => {
   const openProject = (project) => {
     setSelectedProject(project);
     setCurrentImageIndex(0);
+    setCurrentVideoIndex(0);  // 👈 RESET VIDEO INDEX
   };
 
   const nextImage = () => {
@@ -42,6 +45,19 @@ const ProjectGallery = () => {
       setCurrentImageIndex((prev) => 
         prev - 1 < 0 ? selectedProject.gallery_images.length - 1 : prev - 1
       );
+    }
+  };
+
+  // 👈 FUNGSI NAVIGASI UNTUK MULTIPLE VIDEOS
+  const nextVideo = () => {
+    if (selectedProject?.video_urls?.length > 0) {
+      setCurrentVideoIndex((prev) => (prev + 1) % selectedProject.video_urls.length);
+    }
+  };
+
+  const prevVideo = () => {
+    if (selectedProject?.video_urls?.length > 0) {
+      setCurrentVideoIndex((prev) => (prev - 1 + selectedProject.video_urls.length) % selectedProject.video_urls.length);
     }
   };
 
@@ -114,9 +130,10 @@ const ProjectGallery = () => {
                   📸 {project.gallery_images.length}
                 </span>
               )}
-              {project.video_url && (
+              {/* 👈 BADGE UNTUK MULTIPLE VIDEOS */}
+              {project.video_urls?.length > 0 && (
                 <span className="video-badge">
-                  🎬 VIDEO
+                  🎬 {project.video_urls.length}
                 </span>
               )}
             </div>
@@ -129,7 +146,7 @@ const ProjectGallery = () => {
         ))}
       </div>
 
-      {/* ==================== POPUP MODAL YANG DIPERBAIKI ==================== */}
+      {/* ==================== POPUP MODAL DENGAN MULTIPLE VIDEOS ==================== */}
       {selectedProject && (
         <div 
           style={{
@@ -150,6 +167,7 @@ const ProjectGallery = () => {
             if (e.target === e.currentTarget) {
               setSelectedProject(null);
               setCurrentImageIndex(0);
+              setCurrentVideoIndex(0);
             }
           }}
         >
@@ -171,6 +189,7 @@ const ProjectGallery = () => {
               onClick={() => {
                 setSelectedProject(null);
                 setCurrentImageIndex(0);
+                setCurrentVideoIndex(0);
               }}
               style={{
                 position: "absolute",
@@ -202,43 +221,70 @@ const ProjectGallery = () => {
               ✕
             </button>
 
-            {/* CONTENT AREA - SCROLLABLE */}
+            {/* SCROLLABLE CONTENT */}
             <div style={{
               flex: 1,
               overflowY: "auto",
               padding: "20px",
             }}>
               
-              {/* ===== VIDEO SECTION ===== */}
-              {selectedProject.video_url && (
-                <div style={{
-                  marginBottom: "24px",
-                  borderRadius: "12px",
-                  overflow: "hidden",
-                  backgroundColor: "#000",
-                }}>
-                  <iframe
-                    src={selectedProject.video_url}
-                    title={`${selectedProject.title} - Process Video`}
-                    style={{
-                      width: "100%",
-                      aspectRatio: "16/9",
-                      border: "none",
-                    }}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
+              {/* ===== VIDEO SECTION (MULTIPLE VIDEOS) ===== */}
+              {selectedProject.video_urls?.length > 0 && (
+                <div style={{ marginBottom: "24px" }}>
                   <div style={{
-                    padding: "8px 16px",
-                    backgroundColor: "#1a1a1a",
-                    fontSize: "12px",
-                    color: "#98a869",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
+                    borderRadius: "12px",
+                    overflow: "hidden",
+                    backgroundColor: "#000",
                   }}>
-                    <span>🎬</span> Process Video - CNC Machining in Action
+                    <iframe
+                      src={selectedProject.video_urls[currentVideoIndex]}
+                      title={`${selectedProject.title} - Video ${currentVideoIndex + 1}`}
+                      style={{
+                        width: "100%",
+                        aspectRatio: "16/9",
+                        border: "none",
+                      }}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
                   </div>
+                  
+                  {/* Video Navigation (jika multiple videos) */}
+                  {selectedProject.video_urls.length > 1 && (
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "16px",
+                      marginTop: "12px",
+                    }}>
+                      <button onClick={prevVideo} style={{
+                        background: "#333",
+                        border: "none",
+                        borderRadius: "30px",
+                        padding: "6px 16px",
+                        color: "#fff",
+                        cursor: "pointer",
+                        fontSize: "12px",
+                      }}>
+                        ‹ Previous Video
+                      </button>
+                      <span style={{ color: "#888", fontSize: "12px" }}>
+                        Video {currentVideoIndex + 1} of {selectedProject.video_urls.length}
+                      </span>
+                      <button onClick={nextVideo} style={{
+                        background: "#333",
+                        border: "none",
+                        borderRadius: "30px",
+                        padding: "6px 16px",
+                        color: "#fff",
+                        cursor: "pointer",
+                        fontSize: "12px",
+                      }}>
+                        Next Video ›
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -250,7 +296,6 @@ const ProjectGallery = () => {
                   overflow: "hidden",
                   backgroundColor: "#1a1a1a",
                 }}>
-                  {/* Gambar Utama */}
                   <div style={{
                     position: "relative",
                     display: "flex",
@@ -270,77 +315,50 @@ const ProjectGallery = () => {
                       }}
                     />
 
-                    {/* Tombol Navigasi */}
                     {selectedProject.gallery_images.length > 1 && (
                       <>
-                        <button 
-                          onClick={prevImage}
-                          style={{
-                            position: "absolute",
-                            left: "16px",
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            width: "40px",
-                            height: "40px",
-                            backgroundColor: "rgba(0,0,0,0.6)",
-                            border: "1px solid rgba(255,255,255,0.2)",
-                            borderRadius: "50%",
-                            color: "#fff",
-                            fontSize: "24px",
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            transition: "all 0.3s",
-                            zIndex: 10,
-                          }}
-                          onMouseEnter={(e) => e.target.style.backgroundColor = "#98a869"}
-                          onMouseLeave={(e) => e.target.style.backgroundColor = "rgba(0,0,0,0.6)"}
-                        >
+                        <button onClick={prevImage} style={{
+                          position: "absolute",
+                          left: "16px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          width: "40px",
+                          height: "40px",
+                          backgroundColor: "rgba(0,0,0,0.6)",
+                          border: "1px solid rgba(255,255,255,0.2)",
+                          borderRadius: "50%",
+                          color: "#fff",
+                          fontSize: "24px",
+                          cursor: "pointer",
+                          zIndex: 10,
+                        }}>
                           ‹
                         </button>
-                        <button 
-                          onClick={nextImage}
-                          style={{
-                            position: "absolute",
-                            right: "16px",
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            width: "40px",
-                            height: "40px",
-                            backgroundColor: "rgba(0,0,0,0.6)",
-                            border: "1px solid rgba(255,255,255,0.2)",
-                            borderRadius: "50%",
-                            color: "#fff",
-                            fontSize: "24px",
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            transition: "all 0.3s",
-                            zIndex: 10,
-                          }}
-                          onMouseEnter={(e) => e.target.style.backgroundColor = "#98a869"}
-                          onMouseLeave={(e) => e.target.style.backgroundColor = "rgba(0,0,0,0.6)"}
-                        >
+                        <button onClick={nextImage} style={{
+                          position: "absolute",
+                          right: "16px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          width: "40px",
+                          height: "40px",
+                          backgroundColor: "rgba(0,0,0,0.6)",
+                          border: "1px solid rgba(255,255,255,0.2)",
+                          borderRadius: "50%",
+                          color: "#fff",
+                          fontSize: "24px",
+                          cursor: "pointer",
+                          zIndex: 10,
+                        }}>
                           ›
                         </button>
                       </>
                     )}
                   </div>
 
-                  {/* Counter */}
-                  <div style={{
-                    textAlign: "center",
-                    padding: "8px",
-                    fontSize: "12px",
-                    color: "#888",
-                    backgroundColor: "#1a1a1a",
-                  }}>
+                  <div style={{ textAlign: "center", padding: "8px", fontSize: "12px", color: "#888", backgroundColor: "#1a1a1a" }}>
                     {currentImageIndex + 1} / {selectedProject.gallery_images.length}
                   </div>
 
-                  {/* Thumbnail Strip */}
                   {selectedProject.gallery_images.length > 1 && (
                     <div style={{
                       display: "flex",
@@ -362,15 +380,10 @@ const ProjectGallery = () => {
                             cursor: "pointer",
                             border: currentImageIndex === idx ? "2px solid #98a869" : "2px solid transparent",
                             opacity: currentImageIndex === idx ? 1 : 0.6,
-                            transition: "all 0.2s",
                             flexShrink: 0,
                           }}
                         >
-                          <img 
-                            src={img} 
-                            alt={`Thumb ${idx + 1}`}
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                          />
+                          <img src={img} alt={`Thumb ${idx + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         </div>
                       ))}
                     </div>
@@ -410,7 +423,7 @@ const ProjectGallery = () => {
                     </div>
                   )}
 
-                  {selectedProject.tools && selectedProject.tools.length > 0 && (
+                  {selectedProject.tools?.length > 0 && (
                     <div style={{ marginBottom: "16px" }}>
                       <div style={{ fontSize: "10px", color: "#98a869", letterSpacing: "1px", marginBottom: "8px" }}>🔧 TOOLS</div>
                       <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
@@ -423,7 +436,7 @@ const ProjectGallery = () => {
                     </div>
                   )}
 
-                  {selectedProject.tags && selectedProject.tags.length > 0 && (
+                  {selectedProject.tags?.length > 0 && (
                     <div>
                       <div style={{ fontSize: "10px", color: "#98a869", letterSpacing: "1px", marginBottom: "8px" }}>🏷️ TAGS</div>
                       <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
