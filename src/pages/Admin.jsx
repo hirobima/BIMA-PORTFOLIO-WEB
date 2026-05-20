@@ -173,7 +173,7 @@ const Admin = () => {
     setProjectForm({
       code: project.code || '', title: project.title || '', description: project.description || '',
       category: project.category || '', software: project.software || '', tags: (project.tags || []).join(', '),
-      image_url: project.image_url || '', gallery_images: (project.gallery_images || '', video_urls: (project.video_urls || []).join(', '),
+      image_url: project.image_url || '', video_urls: (project.video_urls || []).join(', '), gallery_images: (project.gallery_images || []).join(', '),
       order: project.order || 0, is_published: project.is_published !== false,
       type: project.type || 'toolpath', tools: (project.tools || []).join(', ')
     });
